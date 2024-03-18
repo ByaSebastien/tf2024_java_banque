@@ -1,5 +1,7 @@
 package be.bstorm.models;
 
+import be.bstorm.exceptions.InsufficientBalanceException;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -26,19 +28,20 @@ public class SavingsAccount extends Account {
 
     @Override
     public void withdraw(double amount) {
-        if( this.getBalance() >= amount && amount > 0 ){
-            super.withdraw(amount);
-            this.setLastWithdrawal( LocalDateTime.now() );
+        if (this.getBalance() < amount) {
+            throw new InsufficientBalanceException();
         }
+        super.withdraw(amount);
+        this.setLastWithdrawal(LocalDateTime.now());
     }
 
     @Override
     public String toString() {
         DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE;
         return "SavingsAccount{ " +
-                "number:"+this.getNumber()+ ", "+
-                "lastWithdrawal: "+ (this.getLastWithdrawal() == null ? "null" : this.getLastWithdrawal().format(dtf))
-                +" }";
+                "number:" + this.getNumber() + ", " +
+                "lastWithdrawal: " + (this.getLastWithdrawal() == null ? "null" : this.getLastWithdrawal().format(dtf))
+                + " }";
     }
 
     @Override

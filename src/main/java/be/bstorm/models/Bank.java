@@ -16,6 +16,8 @@ public class Bank {
     public void addAccount(CurrentAccount toAdd){
         System.out.println("version current");
         if( !currentAccounts.containsKey( toAdd.getNumber() ) ){
+//            account.setPassageEnNegatifAction((a) -> passageEnNegatifAction(a) );
+            toAdd.setPassageEnNegatifAction(this::passageEnNegatifAction);
             currentAccounts.put(toAdd.getNumber(), toAdd);
         }
     }
@@ -35,6 +37,10 @@ public class Bank {
         else if ( account instanceof SavingsAccount savingsAccount ){
             this.addAccount(savingsAccount);
         }
+    }
+
+    private void passageEnNegatifAction(Account a){
+        System.out.println(this.name + " : Le compte numero " + a .getNumber() + " vient de passer en négatif.");
     }
 
 }

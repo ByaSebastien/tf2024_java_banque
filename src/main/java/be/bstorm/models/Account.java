@@ -1,10 +1,17 @@
 package be.bstorm.models;
 
-public abstract class Account {
+import be.bstorm.exceptions.NegativeAmountException;
+import be.bstorm.models.interfaces.IBanker;
+import be.bstorm.models.interfaces.ICustomer;
+
+import java.util.function.Consumer;
+
+public abstract class Account implements ICustomer, IBanker {
 
     private String number;
     private double balance;
     private Person owner;
+    private Consumer<Account> passageEnNegatifEvent;
 
     public Account(String number, double balance, Person owner) {
         this.number = number;
@@ -41,15 +48,17 @@ public abstract class Account {
     }
 
     public void deposit(double amount){
-        if( amount < 0 )
-            return;
+        if( amount < 0 ){
+            throw new NegativeAmountException();
+        }
 
         this.setBalance( this.getBalance() + amount );
     }
 
     public void withdraw(double amount){
-        if( amount < 0 )
-            return;
+        if( amount < 0 ){
+            throw new NegativeAmountException();
+        }
 
         this.setBalance( this.getBalance() - amount );
     }
@@ -59,5 +68,14 @@ public abstract class Account {
         double toAdd = this.balance * (calculateInterest() /100);
         this.setBalance( this.getBalance() + toAdd );
     }
+    protected void raisePassageEnNegatifEvent(){
+        if(passageEnNegatifEvent == null){
+            return;
+        }
+        this.passageEnNegatifEvent.accept(this);
+    }
 
+    public void setPassageEnNegatifAction(Consumer<Account> action){
+        this.passageEnNegatifEvent = action;
+    }
 }

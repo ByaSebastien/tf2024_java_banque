@@ -1,6 +1,10 @@
 package be.bstorm;
 
+import be.bstorm.exceptions.InsufficientBalanceException;
+import be.bstorm.exceptions.NegativeAmountException;
 import be.bstorm.models.*;
+import be.bstorm.models.interfaces.IBanker;
+import be.bstorm.models.interfaces.ICustomer;
 
 public class Main {
     public static void main(String[] args) {
@@ -9,7 +13,9 @@ public class Main {
 
         CurrentAccount currentAccount = new CurrentAccount(
                 "BE12 1234 1234 1234",
-                owner
+                owner,
+                1000,
+                -1000
         );
 
         SavingsAccount savingsAccount = new SavingsAccount(
@@ -22,7 +28,19 @@ public class Main {
 
         Bank bank = new Bank("ma banque");
 
-        bank.addAccount(account);
+        bank.addAccount(currentAccount);
+
+        try{
+            currentAccount.withdraw(1500);
+        }catch (NegativeAmountException | InsufficientBalanceException ex){
+            System.out.println(ex.getMessage());
+        }
+
+//        ICustomer customer = currentAccount;
+//        IBanker banker = currentAccount;
+//
+//        customer.deposit(999999999);
+//        banker.applyInterest();
 
     }
 }
